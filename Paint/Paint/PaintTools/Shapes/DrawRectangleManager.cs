@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WindowsFormsApplication1
+namespace PaintApplication.PaintTools.Shapes
 {
-    interface ICommand
+    class DrawRectangleManager
     {
-        void Execute();
     }
 }

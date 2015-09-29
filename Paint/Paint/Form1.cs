@@ -1,32 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using PaintApplication.PaintTools;
+using PaintApplication.PaintTools.Shapes;
 using Trestan;
 
-namespace WindowsFormsApplication1
+namespace PaintApplication
 {
     public partial class Form1 : Form
     {
-        private bool painting = true;
-        private bool filling = false;
-        private bool draw = false;
+        private PaintOperation _actualPaintOperation = PaintOperation.BasicDraw;
         private Graphics g;
         private Point start;
         private Point end;
         private Pen p = new Pen(Color.Black);
-        private Caretaker history =  new Caretaker();
-        private Originator orgi;
-        private Bitmap actualBitmap;
-        private Stack<Bitmap> unDoBitmap = new Stack<Bitmap>();
+        private Caretaker _history =  new Caretaker();
+        private Originator _orginator;
+        private DrawLineManager _drawLineManager;
+        private DrawCircleManager _drawCircleManager;
+        private ShapesManager _shapesManager;
         
         
         public Form1()
@@ -43,37 +36,35 @@ namespace WindowsFormsApplication1
             {
                 Bitmap bmp = new Bitmap(pictureBox_cavans.Width, pictureBox_cavans.Height, PixelFormat.Format32bppRgb);
                 pictureBox_cavans.Image = bmp;
-                using (Graphics g = Graphics.FromImage(pictureBox_cavans.Image))
+                using (Graphics graphics = Graphics.FromImage(pictureBox_cavans.Image))
                 {
-                    g.FillRectangle(Brushes.White, 0, 0, pictureBox_cavans.Width, pictureBox_cavans.Height);
+                    graphics.FillRectangle(Brushes.White, 0, 0, pictureBox_cavans.Width, pictureBox_cavans.Height);
                 }
-                unDoBitmap.Push((Bitmap)bmp.Clone());
             }
             
-            orgi = new Originator((Bitmap)pictureBox_cavans.Image, pictureBox_cavans.Height, pictureBox_cavans.Width);
-            history.SaveState(orgi);
-            
+            _orginator = new Originator((Bitmap)pictureBox_cavans.Image, pictureBox_cavans.Height, pictureBox_cavans.Width);
+            _history.SaveState(_orginator);
+            _drawLineManager = new DrawLineManager();
+            _drawCircleManager = new DrawCircleManager();
+            _shapesManager = new ShapesManager();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            painting = false;
-            filling = true;
+            _actualPaintOperation = PaintOperation.FloodFill;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            painting = true;
-            filling = false;
+            _actualPaintOperation = PaintOperation.BasicDraw;
         }
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
             CopyBitMap();
-            if (filling)
+            if (_actualPaintOperation == PaintOperation.FloodFill)
             {
                 if (e.Button == MouseButtons.Left)
                 {
-                    
                     FloodFiller floodFiller = new FloodFiller();
                     pictureBox_cavans.Image = floodFiller.Fill((Bitmap) pictureBox_cavans.Image, e.Location, panel3.BackColor);
                 }
@@ -82,44 +73,25 @@ namespace WindowsFormsApplication1
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
-            draw = false;
-            
+         
         }
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
-            if (painting)
+            if (e.Button == MouseButtons.Left)
             {
-                if (draw)
-                {
-                    if (e.Button == MouseButtons.Left)
-                    {
-                        end = e.Location;
-                        using (Graphics g = Graphics.FromImage(pictureBox_cavans.Image))
-                        {
-                            g.DrawLine(p, start, end);
-                        }
-                        pictureBox_cavans.Invalidate();
-                        start = end;
-                    }
-
-                }
+                _shapesManager.Draw(pictureBox_cavans, e.Location,p,_actualPaintOperation);
             }
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
-
-            CopyBitMap();
-            Bitmap bit = new Bitmap(pictureBox_cavans.Image);
-            orgi = new Originator(bit, pictureBox_cavans.Height, pictureBox_cavans.Width);
-            history.SaveState(orgi);
-            if (painting)
-                if (e.Button == MouseButtons.Left)
-                {
-                    draw = true;
-                    start = e.Location;
-                }
+            if (e.Button == MouseButtons.Left)
+            {
+                TakeCanvanSnapshot();
+                _shapesManager.GetActualImage = pictureBox_cavans.Image;
+                _shapesManager.GetStartPoint = e.Location;
+            }
         }
 
         private void panel3_MouseClick(object sender, MouseEventArgs e)
@@ -134,7 +106,7 @@ namespace WindowsFormsApplication1
         private void CopyBitMap()
         {
             Bitmap oldBitmap = (Bitmap) pictureBox_cavans.Image;
-            Rectangle rec = new Rectangle(0,0, oldBitmap.Width, oldBitmap.Height);
+            Rectangle rec = new Rectangle(0, 0, oldBitmap.Width, oldBitmap.Height);
             Bitmap newBitmap = Copy(oldBitmap, rec);
             pictureBox_cavans.Image.Dispose();
             pictureBox_cavans.Image = new Bitmap(newBitmap);
@@ -144,15 +116,15 @@ namespace WindowsFormsApplication1
         {
             // Create the new bitmap and associated graphics object
             Bitmap bmp = new Bitmap(pictureBox_cavans.Width, pictureBox_cavans.Height);
-            Graphics g = Graphics.FromImage(bmp);
+            Graphics graphics = Graphics.FromImage(bmp);
 
-            g.FillRectangle(Brushes.White, 0, 0, pictureBox_cavans.Width, pictureBox_cavans.Height);
+            graphics.FillRectangle(Brushes.White, 0, 0, pictureBox_cavans.Width, pictureBox_cavans.Height);
 
             // Draw the specified section of the source bitmap to the new one
-            g.DrawImage(srcBitmap, 0, 0, section, GraphicsUnit.Pixel);
+            graphics.DrawImage(srcBitmap, 0, 0, section, GraphicsUnit.Pixel);
 
             // Clean up
-            g.Dispose();
+            graphics.Dispose();
 
             // Return the bitmap
             return bmp;
@@ -174,8 +146,8 @@ namespace WindowsFormsApplication1
 
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            history.RestoreState(orgi);
-            SetCavanBitmapAndSize(orgi.GetBitmap(), orgi.GetHeight(), orgi.GetWidth());
+            _history.RestoreState(_orginator);
+            SetCavanBitmapAndSize(_orginator.GetBitmap(), _orginator.GetHeight(), _orginator.GetWidth());
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -185,7 +157,7 @@ namespace WindowsFormsApplication1
 
         private void SetCavanBitmapAndSize(Bitmap bitmap, int height, int width)
         {
-            pictureBox_cavans.Size = new Size(width,height);
+            pictureBox_cavans.Size = new Size(width, height);
             pictureBox_cavans.Image = (Bitmap) bitmap.Clone();
         }
 
@@ -199,8 +171,8 @@ namespace WindowsFormsApplication1
         private void TakeCanvanSnapshot()
         {
             Bitmap bit = new Bitmap(pictureBox_cavans.Image);
-            orgi = new Originator(bit, pictureBox_cavans.Height, pictureBox_cavans.Width);
-            history.SaveState(orgi);
+            _orginator = new Originator(bit, pictureBox_cavans.Height, pictureBox_cavans.Width);
+            _history.SaveState(_orginator);
         }
 
         private void degreesInRightToolStripMenuItem_Click(object sender, EventArgs e)
@@ -210,7 +182,6 @@ namespace WindowsFormsApplication1
             Image oldImage = pictureBox_cavans.Image;
             pictureBox_cavans.Size = new Size(pictureBox_cavans.Height, pictureBox_cavans.Width);
             pictureBox_cavans.Image = manager.Rotate90DegreesRight(oldImage);
-            
         }
 
         private void degreesInLeftToolStripMenuItem_Click(object sender, EventArgs e)
@@ -244,6 +215,21 @@ namespace WindowsFormsApplication1
             RotateManager manager = new RotateManager();
             Image oldImage = pictureBox_cavans.Image;
             pictureBox_cavans.Image = manager.Rotate180Degrees(oldImage);
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            _actualPaintOperation = PaintOperation.DrawLine;
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            _actualPaintOperation = PaintOperation.DrawCircle;
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            _actualPaintOperation = PaintOperation.DrawRectangle;
         }
     }
 }
