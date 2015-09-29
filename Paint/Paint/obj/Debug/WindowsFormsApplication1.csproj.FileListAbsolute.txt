@@ -8,3 +8,6 @@ C:\Users\Michael\Documents\Visual Studio 2012\Projects\WindowsFormsApplication1\
 C:\Users\Michael\Documents\Visual Studio 2012\Projects\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.pdb
 C:\Users\Michael\Documents\Visual Studio 2012\Projects\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.csprojResolveAssemblyReference.cache
 C:\Users\Michael\Documents\Visual Studio 2012\Projects\WindowsFormsApplication1\WindowsFormsApplication1\obj\Debug\WindowsFormsApplication1.MyPictureBox.resources
+C:\Users\Michael\Documents\Paint\Paint\Paint\bin\Debug\WindowsFormsApplication1.exe.config
+C:\Users\Michael\Documents\Paint\Paint\Paint\obj\Debug\WindowsFormsApplication1.exe
+C:\Users\Michael\Documents\Paint\Paint\Paint\obj\Debug\WindowsFormsApplication1.pdb

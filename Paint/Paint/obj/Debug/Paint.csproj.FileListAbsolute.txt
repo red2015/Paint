@@ -1,0 +1,3 @@
+C:\Users\Michael\Documents\Paint\Paint\Paint\bin\Debug\WindowsFormsApplication1.exe.config
+C:\Users\Michael\Documents\Paint\Paint\Paint\obj\Debug\WindowsFormsApplication1.exe
+C:\Users\Michael\Documents\Paint\Paint\Paint\obj\Debug\WindowsFormsApplication1.pdb
