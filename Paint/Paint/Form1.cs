@@ -34,6 +34,9 @@ namespace WindowsFormsApplication1
             InitializeComponent();
             panel1.BackgroundImage = new Bitmap(panel1.Height, panel1.Width);
             TCResize tcResize = new TCResize(pictureBox_cavans);
+            tcResize.SizeIsChanging += SetInformationsSize;
+            tcResize.SizeIsStarChanging += TakeCanvanSnapshot;
+
             textBox_HorizontalPositon.Text = pictureBox_cavans.Width.ToString();
             textBox_VerticalPosiotion.Text = pictureBox_cavans.Height.ToString();
             if (pictureBox_cavans.Image == null)
@@ -111,7 +114,6 @@ namespace WindowsFormsApplication1
             Bitmap bit = new Bitmap(pictureBox_cavans.Image);
             orgi = new Originator(bit, pictureBox_cavans.Height, pictureBox_cavans.Width);
             history.SaveState(orgi);
-            //unDoBitmap.Push((Bitmap)bit.Clone());
             if (painting)
                 if (e.Button == MouseButtons.Left)
                 {
@@ -158,37 +160,27 @@ namespace WindowsFormsApplication1
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            SaveManager saveManager = new SaveManager();
+            saveManager.SavePictureToBmpFile(pictureBox_cavans);
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            LoadManager loadManager = new LoadManager();
+            Bitmap bitmap = loadManager.LoadBmpPictureFile();
+            pictureBox_cavans.Size = new Size(bitmap.Width, bitmap.Height);
+            pictureBox_cavans.Image = bitmap;
         }
 
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //Bitmap bmp = new Bitmap(pictureBox_cavans.Width, pictureBox_cavans.Height, PixelFormat.Format32bppRgb);
-            //pictureBox_cavans.Image = bmp;
-            //using (Graphics g = Graphics.FromImage(pictureBox_cavans.Image))
-            //{
-            //    g.FillRectangle(Brushes.White, 0, 0, pictureBox_cavans.Width, pictureBox_cavans.Height);
-            //}
-            //pictureBox_cavans.Image = bmp;
-
-            //pictureBox_cavans.Image = 
-            //    (Bitmap) unDoBitmap.Pop().Clone();
-            //pictureBox_cavans.Refresh();
-
             history.RestoreState(orgi);
             SetCavanBitmapAndSize(orgi.GetBitmap(), orgi.GetHeight(), orgi.GetWidth());
-
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             pictureBox_cavans.Size = new Size(int.Parse(textBox_HorizontalPositon.Text), int.Parse(textBox_VerticalPosiotion.Text));
-
         }
 
         private void SetCavanBitmapAndSize(Bitmap bitmap, int height, int width)
@@ -196,7 +188,62 @@ namespace WindowsFormsApplication1
             pictureBox_cavans.Size = new Size(width,height);
             pictureBox_cavans.Image = (Bitmap) bitmap.Clone();
         }
-          
 
+        private void SetInformationsSize()
+        {
+            textBox_HorizontalPositon.Text = pictureBox_cavans.Width.ToString();
+            textBox_VerticalPosiotion.Text = pictureBox_cavans.Height.ToString();
+            CopyBitMap();
+        }
+
+        private void TakeCanvanSnapshot()
+        {
+            Bitmap bit = new Bitmap(pictureBox_cavans.Image);
+            orgi = new Originator(bit, pictureBox_cavans.Height, pictureBox_cavans.Width);
+            history.SaveState(orgi);
+        }
+
+        private void degreesInRightToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TakeCanvanSnapshot();
+            RotateManager manager = new RotateManager();
+            Image oldImage = pictureBox_cavans.Image;
+            pictureBox_cavans.Size = new Size(pictureBox_cavans.Height, pictureBox_cavans.Width);
+            pictureBox_cavans.Image = manager.Rotate90DegreesRight(oldImage);
+            
+        }
+
+        private void degreesInLeftToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TakeCanvanSnapshot();
+            RotateManager manager = new RotateManager();
+            Image oldImage = pictureBox_cavans.Image;
+            pictureBox_cavans.Size = new Size(pictureBox_cavans.Height, pictureBox_cavans.Width);
+            pictureBox_cavans.Image = manager.Rotate90DegreesLeft(oldImage);
+        }
+
+        private void horizontalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TakeCanvanSnapshot();
+            RotateManager manager = new RotateManager();
+            Image oldImage = pictureBox_cavans.Image;
+            pictureBox_cavans.Image = manager.FlipHorizontal(oldImage);
+        }
+
+        private void verticalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TakeCanvanSnapshot();
+            RotateManager manager = new RotateManager();
+            Image oldImage = pictureBox_cavans.Image;
+            pictureBox_cavans.Image = manager.FlipVertical(oldImage);
+        }
+
+        private void degreesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TakeCanvanSnapshot();
+            RotateManager manager = new RotateManager();
+            Image oldImage = pictureBox_cavans.Image;
+            pictureBox_cavans.Image = manager.Rotate180Degrees(oldImage);
+        }
     }
 }

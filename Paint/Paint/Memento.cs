@@ -34,7 +34,7 @@ namespace WindowsFormsApplication1
 
         public Bitmap GetBitmap()
         {
-            return new Bitmap(_bitmap);
+            return (Bitmap) _bitmap.Clone();
         }
 
     }

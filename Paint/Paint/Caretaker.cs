@@ -16,7 +16,8 @@ namespace WindowsFormsApplication1
 
         public void RestoreState(Originator orig)
         {
-            orig.SetMemento(_mementos.Pop());
+            if(_mementos.Count > 1)
+                orig.SetMemento(_mementos.Pop());
         }
     }
 }

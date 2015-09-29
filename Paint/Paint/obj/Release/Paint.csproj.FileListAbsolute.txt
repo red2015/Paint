@@ -1,0 +1,8 @@
+C:\Users\Michael\Documents\Paint\Paint\Paint\bin\Release\WindowsFormsApplication1.exe.config
+C:\Users\Michael\Documents\Paint\Paint\Paint\bin\Release\WindowsFormsApplication1.exe
+C:\Users\Michael\Documents\Paint\Paint\Paint\bin\Release\WindowsFormsApplication1.pdb
+C:\Users\Michael\Documents\Paint\Paint\Paint\obj\Release\WindowsFormsApplication1.Form1.resources
+C:\Users\Michael\Documents\Paint\Paint\Paint\obj\Release\WindowsFormsApplication1.Properties.Resources.resources
+C:\Users\Michael\Documents\Paint\Paint\Paint\obj\Release\Paint.csproj.GenerateResource.Cache
+C:\Users\Michael\Documents\Paint\Paint\Paint\obj\Release\WindowsFormsApplication1.exe
+C:\Users\Michael\Documents\Paint\Paint\Paint\obj\Release\WindowsFormsApplication1.pdb

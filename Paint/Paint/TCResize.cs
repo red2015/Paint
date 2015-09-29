@@ -43,6 +43,8 @@ namespace Trestan
 
     public class TCResize
     {
+        public Action SizeIsChanging;
+        public Action SizeIsStarChanging;
         PictureBox controltobeResized;
         static readonly int decoration = 3;
         public static int Decoration
@@ -69,6 +71,7 @@ namespace Trestan
         private System.Windows.Forms.PictureBox pictureBox2 = new PictureBox();
         private System.Windows.Forms.PictureBox pictureBox3 = new PictureBox();
         private System.Windows.Forms.Label label1 = new Label();
+        private bool _sizeChanged = false;
 
 
         private void InitializeComponent()
@@ -86,6 +89,8 @@ namespace Trestan
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
+            this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(pictureBox1_MouseUp);
+            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(pictureBox1_MouseDown);
             this.pictureBox1.MouseLeave += new System.EventHandler(this.pictureBox_MouseLeave);
             this.pictureBox1.MouseEnter += new System.EventHandler(this.pictureBox_MouseEnter);
             // 
@@ -101,6 +106,8 @@ namespace Trestan
             this.pictureBox2.TabIndex = 2;
             this.pictureBox2.TabStop = false;
             this.pictureBox2.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox2_MouseMove);
+            this.pictureBox2.MouseUp += new System.Windows.Forms.MouseEventHandler(pictureBox2_MouseUp);
+            this.pictureBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(pictureBox2_MouseDown);
             this.pictureBox2.MouseLeave += new System.EventHandler(this.pictureBox_MouseLeave);
             this.pictureBox2.MouseEnter += new System.EventHandler(this.pictureBox_MouseEnter);
             // 
@@ -115,6 +122,8 @@ namespace Trestan
             this.pictureBox3.TabIndex = 3;
             this.pictureBox3.TabStop = false;
             this.pictureBox3.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox3_MouseMove);
+            this.pictureBox3.MouseUp += new System.Windows.Forms.MouseEventHandler(pictureBox3_MouseUp);
+            this.pictureBox3.MouseDown += new System.Windows.Forms.MouseEventHandler(pictureBox3_MouseDown);
             this.pictureBox3.MouseLeave += new System.EventHandler(this.pictureBox_MouseLeave);
             this.pictureBox3.MouseEnter += new System.EventHandler(this.pictureBox_MouseEnter);
             // 
@@ -128,6 +137,51 @@ namespace Trestan
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(41, 12);
             this.label1.TabIndex = 4;
+        }
+
+        private void pictureBox3_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+                SizeIsStarChanging();
+        }
+
+        private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+                SizeIsStarChanging();
+        }
+
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+                SizeIsStarChanging();
+        }
+
+        private void pictureBox3_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (_sizeChanged)
+            {
+                SizeIsChanging();
+                _sizeChanged = false;
+            }
+        }
+
+        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (_sizeChanged)
+            {
+                SizeIsChanging();
+                _sizeChanged = false;
+            }
+        }
+
+        private void pictureBox2_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (_sizeChanged)
+            {
+                SizeIsChanging();
+                _sizeChanged = false;
+            }
         }
 
         void ShowTCTip()
@@ -155,6 +209,7 @@ namespace Trestan
                 {
                     controltobeResized.Width = decoration;
                 }
+                _sizeChanged = true;
             }
             
             ShowTCTip();
@@ -169,6 +224,7 @@ namespace Trestan
                 {
                     controltobeResized.Height = decoration;
                 }
+                _sizeChanged = true;
             }
             
             ShowTCTip();
@@ -188,7 +244,7 @@ namespace Trestan
                 {
                     controltobeResized.Height = decoration;
                 }
-                
+                _sizeChanged = true;
             }
             
             ShowTCTip();
