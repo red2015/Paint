@@ -9,8 +9,9 @@ namespace WindowsFormsApplication1
 {
     class FloodFiller
     {
-        public Bitmap Fill(Bitmap bmp, Point pt, Color targetColor, Color replacementColor)
+        public Bitmap Fill(Bitmap bmp, Point pt, Color replacementColor)
         {
+            Color targetColor = GetPixelColor(pt, bmp);
             Queue<Point> q = new Queue<Point>();
             q.Enqueue(pt);
             while (q.Count > 0)
@@ -43,6 +44,11 @@ namespace WindowsFormsApplication1
         private static bool ColorMatch(Color a, Color b)
         {
             return (a.ToArgb() & 0xffffff) == (b.ToArgb() & 0xffffff);
+        }
+
+        private Color GetPixelColor(Point location, Bitmap bitmap)
+        {
+            return bitmap.GetPixel(location.X, location.Y);
         }
     }
 }

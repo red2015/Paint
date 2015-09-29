@@ -188,6 +188,7 @@ namespace Trestan
                 {
                     controltobeResized.Height = decoration;
                 }
+                
             }
             
             ShowTCTip();
