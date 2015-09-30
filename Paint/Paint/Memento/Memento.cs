@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Drawing;
 
-namespace PaintApplication
+namespace WindowsFormsApplication1.Memento
 {
     class Memento
     {
@@ -20,7 +14,6 @@ namespace PaintApplication
             _height = height;
             _width = width;
         }
-
 
         public int GetWidth()
         {

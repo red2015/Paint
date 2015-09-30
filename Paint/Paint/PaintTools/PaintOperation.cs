@@ -1,4 +1,4 @@
-﻿namespace PaintApplication.PaintTools
+﻿namespace WindowsFormsApplication1.PaintTools
 {
     enum PaintOperation
     {

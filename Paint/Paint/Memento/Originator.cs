@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
-namespace PaintApplication
+namespace WindowsFormsApplication1.Memento
 {
     class Originator
     {
@@ -46,6 +41,5 @@ namespace PaintApplication
         {
             return _bitmap;
         }
-
     }
 }

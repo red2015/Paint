@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using System.Drawing;
+using System.Windows.Forms;
 
-namespace Trestan
+namespace WindowsFormsApplication1
 {
     internal static class ControlExtension
     {
@@ -45,7 +42,7 @@ namespace Trestan
     {
         public Action SizeIsChanging;
         public Action SizeIsStarChanging;
-        PictureBox controltobeResized;
+        Control controltobeResized;
         static readonly int decoration = 3;
         public static int Decoration
         {
@@ -63,10 +60,6 @@ namespace Trestan
             theControl.Parent.Controls.Add(label1);
         }
 
-        public Image GetPictureBoxImage()
-        {
-            return controltobeResized.Image;
-        }
         private System.Windows.Forms.PictureBox pictureBox1 = new PictureBox();
         private System.Windows.Forms.PictureBox pictureBox2 = new PictureBox();
         private System.Windows.Forms.PictureBox pictureBox3 = new PictureBox();

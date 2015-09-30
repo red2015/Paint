@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace WindowsFormsApplication1.PaintTools.NewFolder1
+namespace WindowsFormsApplication1.PaintTools.Strategy_Shapes_Draw
 {
     class ShapesDrawerCircle : IShapesDrawer
     {

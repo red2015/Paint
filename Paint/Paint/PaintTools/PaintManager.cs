@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Net.NetworkInformation;
-using System.Runtime.InteropServices;
+﻿using System.Drawing;
 using System.Windows.Forms;
-using WindowsFormsApplication1.PaintTools.NewFolder1;
+using WindowsFormsApplication1.Memento;
+using WindowsFormsApplication1.PaintTools.SaveAndLoad;
+using WindowsFormsApplication1.PaintTools.Strategy_Draw;
+using WindowsFormsApplication1.PaintTools.Strategy_Shapes_Draw;
 using PaintApplication;
-using PaintApplication.PaintTools;
 
-namespace WindowsFormsApplication1.PaintTools.Shapes.DrawingStrategy
+namespace WindowsFormsApplication1.PaintTools
 {
     internal class PaintManager
     {
-        private Point _startPoint;
-        private Image _actualImage;
         private PaintOperation _paintOperation;
         private Pen _pen;
         private Caretaker _history;
@@ -21,7 +17,7 @@ namespace WindowsFormsApplication1.PaintTools.Shapes.DrawingStrategy
         private IShapesDrawer _shapesDrawer;
         private IDrawer _drawer;
 
-    #region Constructors
+        #region Constructors
 
         public PaintManager()
         {
@@ -30,20 +26,9 @@ namespace WindowsFormsApplication1.PaintTools.Shapes.DrawingStrategy
             _history = new Caretaker();
         }
 
-    #endregion
+        #endregion
 
-    #region Properties
-        public Point StartPoint
-        {
-            get { return _startPoint; }
-            set { _startPoint = value; }
-        }
-
-        public Image ActualImage
-        {
-            get { return _actualImage; }
-            set { _actualImage = value; }
-        }
+        #region Properties
 
         public PaintOperation Operation
         {
@@ -56,22 +41,11 @@ namespace WindowsFormsApplication1.PaintTools.Shapes.DrawingStrategy
             get { return _pen; }
             set { _pen = value; }
         }
-    #endregion
 
-        public void UndoOperation(PictureBox pictureBox)
-        {
-            _history.RestoreState(_orginator);
-            pictureBox.Size = new Size(_orginator.GetWidth(), _orginator.GetHeight());
-            pictureBox.Image = (Bitmap)_orginator.GetBitmap().Clone();
-        }
+        #endregion
 
-        public void TakeSnapshot(PictureBox pictureBox)
-        {
-            Bitmap bit = new Bitmap(pictureBox.Image);
-            _orginator = new Originator(bit, pictureBox.Height, pictureBox.Width);
-            _history.SaveState(_orginator);
-        }
-    #region Rotations
+        #region RotationsMethods
+
         public void RotatePicture90DegreesRight(PictureBox pictureBox)
         {
             TakeSnapshot(pictureBox);
@@ -113,7 +87,28 @@ namespace WindowsFormsApplication1.PaintTools.Shapes.DrawingStrategy
             Image oldImage = pictureBox.Image;
             pictureBox.Image = manager.FlipHorizontal(oldImage);
         }
-    #endregion
+
+        #endregion
+
+        #region SaveAndLoadMethods
+
+        public void SavePictureToFile(PictureBox pictureBox)
+        {
+            SaveManager saveManager = new SaveManager();
+            saveManager.SavePictureToBmpFile(pictureBox);
+        }
+
+        public void LoadBmpFileToPicture(PictureBox pictureBox)
+        {
+            LoadManager loadManager = new LoadManager();
+            Bitmap bitmap = loadManager.LoadBmpPictureFile();
+            pictureBox.Size = new Size(bitmap.Width, bitmap.Height);
+            pictureBox.Image = bitmap;
+        }
+
+        #endregion
+
+        #region DrawingMethod
 
         public void CreateDrawer(Point startPoint)
         {
@@ -142,8 +137,8 @@ namespace WindowsFormsApplication1.PaintTools.Shapes.DrawingStrategy
 
         public void MoveForwad(PictureBox pictureBox, Point temporaryPoint)
         {
-            if(_paintOperation == PaintOperation.BasicDraw || _paintOperation == PaintOperation.Rubber)
-                _drawer.Draw(pictureBox,temporaryPoint, _pen);
+            if (_paintOperation == PaintOperation.BasicDraw || _paintOperation == PaintOperation.Rubber)
+                _drawer.Draw(pictureBox, temporaryPoint, _pen);
             else
             {
                 _shapesDrawer.MoveForward(temporaryPoint);
@@ -173,6 +168,32 @@ namespace WindowsFormsApplication1.PaintTools.Shapes.DrawingStrategy
                 pictureBox.Image = floodFiller.Fill(pictureBitmap, temporaryPoint, _pen.Color);
             }
         }
+
+        #endregion
+
+        #region OtherMethods
+
+        public void CopyPictureBitmap(PictureBox pictureBox)
+        {
+            CopyBitmapManager copyBitmapManager = new CopyBitmapManager();
+            copyBitmapManager.CopyPictureBitmap(pictureBox);
+        }
+
+        public void UndoOperation(PictureBox pictureBox)
+        {
+            _history.RestoreState(_orginator);
+            pictureBox.Size = new Size(_orginator.GetWidth(), _orginator.GetHeight());
+            pictureBox.Image = (Bitmap) _orginator.GetBitmap().Clone();
+        }
+
+        public void TakeSnapshot(PictureBox pictureBox)
+        {
+            Bitmap bit = new Bitmap(pictureBox.Image);
+            _orginator = new Originator(bit, pictureBox.Height, pictureBox.Width);
+            _history.SaveState(_orginator);
+        }
+
+        #endregion
 
     }
 }

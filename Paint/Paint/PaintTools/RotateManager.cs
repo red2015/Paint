@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace PaintApplication.PaintTools
+namespace WindowsFormsApplication1.PaintTools
 {
     class RotateManager
     {

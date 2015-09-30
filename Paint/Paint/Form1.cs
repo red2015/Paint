@@ -1,212 +1,204 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
-using WindowsFormsApplication1.PaintTools.NewFolder1;
-using WindowsFormsApplication1.PaintTools.Shapes.DrawingStrategy;
-using PaintApplication.PaintTools;
-using Trestan;
+using WindowsFormsApplication1.PaintTools;
 
-namespace PaintApplication
+namespace WindowsFormsApplication1
 {
     public partial class Form1 : Form
     {
         private PaintManager paintManager;
-        private Point point;
-        Rectangle rect = new Rectangle();
-        Brush selectionBrush = new SolidBrush(Color.Black);
+        private TCResize tcResize;
 
         public Form1()
         {
             InitializeComponent();
-            TCResize tcResize = new TCResize(pictureBox_cavans);
-            tcResize.SizeIsChanging += SetInformationsSizeAboutCanvan;
-            tcResize.SizeIsStarChanging += TakeCanvanSnapshot;
-                        if (pictureBox_cavans.Image == null)
-            {
-                Bitmap bmp = new Bitmap(pictureBox_cavans.Width, pictureBox_cavans.Height, PixelFormat.Format64bppPArgb);
-                pictureBox_cavans.Image = bmp;
-                using (Graphics graphics = Graphics.FromImage(pictureBox_cavans.Image))
-                {
-                    graphics.FillRectangle(Brushes.White, 0, 0, pictureBox_cavans.Width, pictureBox_cavans.Height);
-                }
-            }
-            SetInformationsSizeAboutCanvan();
-            
             paintManager = new PaintManager();
+            tcResize = new TCResize(pictureBox_canvas);
+            tcResize.SizeIsChanging += SetInformationsSizeAboutCanvas;
+            tcResize.SizeIsStarChanging += TakeCanvasSnapshot;
+            InitializeBitmap();
+            SetInformationsSizeAboutCanvas();
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            paintManager.Operation = PaintOperation.FloodFill;
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            paintManager.Operation = PaintOperation.BasicDraw;
-        }
-        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
-        {
-            if(e.Button == MouseButtons.Left)
-                paintManager.FloodFill(pictureBox_cavans,e.Location);
-        }
-
-
-        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
+    #region SaveAndLoadMethods
+            private void saveToolStripMenuItem_Click(object sender, EventArgs e)
             {
-                paintManager.MoveForwad(pictureBox_cavans, e.Location);
-                pictureBox_cavans.Invalidate();
+                paintManager.SavePictureToFile(pictureBox_canvas);
             }
-            
-        }
-
-        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
-        {
-            //if (e.Button == MouseButtons.Left)
-            //{
-            //    TakeCanvanSnapshot();
-            //    paintManager.ActualImage = pictureBox_cavans.Image;
-            //    paintManager.StartPoint = e.Location;
-            //}
-            if (e.Button == MouseButtons.Left)
+            private void openToolStripMenuItem_Click(object sender, EventArgs e)
             {
-                TakeCanvanSnapshot();
-                paintManager.CreateDrawer(e.Location);
-                Invalidate();
+                paintManager.LoadBmpFileToPicture(pictureBox_canvas);
             }
-        }
 
-        private void panel3_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (colorDialog1.ShowDialog() == DialogResult.OK)
-            {
-                paintManager.Pen = new Pen(colorDialog1.Color);
-                panel3.BackColor = colorDialog1.Color;
-            }
-        }
+    #endregion
 
-        private void CopyBitMap()
-        {
-            Bitmap oldBitmap = (Bitmap) pictureBox_cavans.Image;
-            Rectangle rec = new Rectangle(0, 0, oldBitmap.Width, oldBitmap.Height);
-            Bitmap newBitmap = Copy(oldBitmap, rec);
-            pictureBox_cavans.Image.Dispose();
-            pictureBox_cavans.Image = new Bitmap(newBitmap, newBitmap.Width, newBitmap.Height);
-        }
-
-        private Bitmap Copy(Bitmap srcBitmap, Rectangle section)
-        {
-            // Create the new bitmap and associated graphics object
-            Bitmap bmp = new Bitmap(pictureBox_cavans.Width, pictureBox_cavans.Height);
-            Graphics graphics = Graphics.FromImage(bmp);
-
-            graphics.FillRectangle(Brushes.White, 0, 0, pictureBox_cavans.Width, pictureBox_cavans.Height);
-
-            // Draw the specified section of the source bitmap to the new one
-            graphics.DrawImage(srcBitmap, 0, 0, section, GraphicsUnit.Pixel);
-
-            // Clean up
-            graphics.Dispose();
-
-            // Return the bitmap
-            return bmp;
-        }
-
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveManager saveManager = new SaveManager();
-            saveManager.SavePictureToBmpFile(pictureBox_cavans);
-        }
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            LoadManager loadManager = new LoadManager();
-            Bitmap bitmap = loadManager.LoadBmpPictureFile();
-            pictureBox_cavans.Size = new Size(bitmap.Width, bitmap.Height);
-            pictureBox_cavans.Image = bitmap;
-        }
-
+    #region UndoEvent
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            paintManager.UndoOperation(pictureBox_cavans);
+            paintManager.UndoOperation(pictureBox_canvas);
+            SetInformationsSizeAboutCanvas();
         }
+    #endregion
 
-        private void button3_Click(object sender, EventArgs e)
+    #region FlipAndRotateEvents
+
+            private void degreesInRightToolStripMenuItem_Click(object sender, EventArgs e)
+            {
+                paintManager.RotatePicture90DegreesRight(pictureBox_canvas);
+            }
+
+            private void degreesInLeftToolStripMenuItem_Click(object sender, EventArgs e)
+            {
+                paintManager.RotatePicture90DegreesLeft(pictureBox_canvas);
+            }
+
+            private void horizontalToolStripMenuItem_Click(object sender, EventArgs e)
+            {
+                paintManager.FlipPictureHorizontal(pictureBox_canvas);
+            }
+
+            private void verticalToolStripMenuItem_Click(object sender, EventArgs e)
+            {
+                paintManager.FlipPictureVertical(pictureBox_canvas);
+            }
+
+            private void degreesToolStripMenuItem_Click(object sender, EventArgs e)
+            {
+                paintManager.RotatePicture180Degrees(pictureBox_canvas);
+            }
+
+    #endregion
+
+    #region ButtonsEvents
+
+            private void button_pencil_Click(object sender, EventArgs e)
+            {
+                paintManager.Operation = PaintOperation.BasicDraw;
+            }
+
+            private void button_flood_Click(object sender, EventArgs e)
+            {
+                paintManager.Operation = PaintOperation.FloodFill;
+            }
+
+            private void button_setSize_Click(object sender, EventArgs e)
+            {
+                uint height;
+                uint width;
+                if (uint.TryParse(textBox_HorizontalPositon.Text, out width) && uint.TryParse(textBox_VerticalPosiotion.Text, out height))
+                    pictureBox_canvas.Size = new Size((int)width, (int)height);
+                else
+                    SetInformationsSizeAboutCanvas();
+            }
+
+            private void button_line_Click(object sender, EventArgs e)
+            {
+                paintManager.Operation = PaintOperation.DrawLine;
+            }
+
+            private void button_circle_Click(object sender, EventArgs e)
+            {
+                paintManager.Operation = PaintOperation.DrawCircle;
+            }
+
+            private void button_rectangle_Click(object sender, EventArgs e)
+            {
+                paintManager.Operation = PaintOperation.DrawRectangle;
+            }
+
+            private void button_rubber_Click(object sender, EventArgs e)
+            {
+                paintManager.Operation = PaintOperation.Rubber;
+            }
+
+    #endregion
+
+    #region CanvasMouseEvents
+
+            private void pictureBox_canvas_MouseUp(object sender, MouseEventArgs e)
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                   paintManager.DrawShapes(pictureBox_canvas);
+                }
+            }
+
+            private void pictureBox_canvas_Paint(object sender, PaintEventArgs e)
+            {
+                paintManager.RefreshDrawingShapes(e);
+            }
+            private void pictureBox_canvas_MouseClick(object sender, MouseEventArgs e)
+            {
+                if (e.Button == MouseButtons.Left)
+                    paintManager.FloodFill(pictureBox_canvas, e.Location);
+            }
+
+
+            private void pictureBox_canvas_MouseMove(object sender, MouseEventArgs e)
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    paintManager.MoveForwad(pictureBox_canvas, e.Location);
+                    pictureBox_canvas.Invalidate();
+                }
+
+            }
+
+            private void pictureBox_canvas_MouseDown(object sender, MouseEventArgs e)
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    TakeCanvasSnapshot();
+                    paintManager.CreateDrawer(e.Location);
+                    Invalidate();
+                }
+            }
+
+            private void panel3_MouseClick(object sender, MouseEventArgs e)
+            {
+                if (colorDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    paintManager.Pen = new Pen(colorDialog1.Color);
+                    panel3.BackColor = colorDialog1.Color;
+                }
+            }
+
+    #endregion
+
+    #region BitmapOperations
+        private void InitializeBitmap()
         {
-            pictureBox_cavans.Size = new Size(int.Parse(textBox_HorizontalPositon.Text), int.Parse(textBox_VerticalPosiotion.Text));
+            if (pictureBox_canvas.Image == null)
+            {
+                Bitmap bmp = new Bitmap(pictureBox_canvas.Width, pictureBox_canvas.Height, PixelFormat.Format64bppPArgb);
+                pictureBox_canvas.Image = bmp;
+                using (Graphics graphics = Graphics.FromImage(pictureBox_canvas.Image))
+                {
+                    graphics.FillRectangle(Brushes.White, 0, 0, pictureBox_canvas.Width, pictureBox_canvas.Height);
+                }
+            }
         }
-
-        private void SetInformationsSizeAboutCanvan()
+        private void CopyBitMap()
         {
-            textBox_HorizontalPositon.Text = pictureBox_cavans.Width.ToString();
-            textBox_VerticalPosiotion.Text = pictureBox_cavans.Height.ToString();
+            paintManager.CopyPictureBitmap(pictureBox_canvas);
+        }
+    #endregion
+
+    #region OtherMethod
+        private void SetInformationsSizeAboutCanvas()
+        {
+            textBox_HorizontalPositon.Text = pictureBox_canvas.Width.ToString();
+            textBox_VerticalPosiotion.Text = pictureBox_canvas.Height.ToString();
             CopyBitMap();
         }
 
-        private void TakeCanvanSnapshot()
+        private void TakeCanvasSnapshot()
         {
-            paintManager.TakeSnapshot(pictureBox_cavans);
+            paintManager.TakeSnapshot(pictureBox_canvas);
         }
+    #endregion
 
-        private void degreesInRightToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            paintManager.RotatePicture90DegreesRight(pictureBox_cavans);
-        }
-
-        private void degreesInLeftToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            paintManager.RotatePicture90DegreesLeft(pictureBox_cavans);
-        }
-
-        private void horizontalToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            paintManager.FlipPictureHorizontal(pictureBox_cavans);
-        }
-
-        private void verticalToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            paintManager.FlipPictureVertical(pictureBox_cavans);
-        }
-
-        private void degreesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            paintManager.RotatePicture180Degrees(pictureBox_cavans);
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            paintManager.Operation = PaintOperation.DrawLine;
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            paintManager.Operation = PaintOperation.DrawCircle;
-        }
-
-        private void button6_Click(object sender, EventArgs e)
-        {
-            paintManager.Operation = PaintOperation.DrawRectangle;
-        }
-
-        private void button_Rubber_Click(object sender, EventArgs e)
-        {
-            paintManager.Operation = PaintOperation.Rubber;
-        }
-
-        private void pictureBox_cavans_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-               paintManager.DrawShapes(pictureBox_cavans);
-            }
-
-        }
-
-        private void pictureBox_cavans_Paint(object sender, PaintEventArgs e)
-        {
-            paintManager.RefreshDrawingShapes(e);
-        }
     }
 }
