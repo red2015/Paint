@@ -33,6 +33,7 @@
             this.pictureBox_cavans = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.button6 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
@@ -53,7 +54,7 @@
             this.flipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.horizontalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.verticalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.button6 = new System.Windows.Forms.Button();
+            this.button_Rubber = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_cavans)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -91,7 +92,6 @@
             this.pictureBox_cavans.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseClick);
             this.pictureBox_cavans.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
             this.pictureBox_cavans.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
-            this.pictureBox_cavans.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
             // 
             // panel1
             // 
@@ -106,6 +106,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.button_Rubber);
             this.panel2.Controls.Add(this.button6);
             this.panel2.Controls.Add(this.button5);
             this.panel2.Controls.Add(this.button4);
@@ -119,6 +120,16 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1159, 38);
             this.panel2.TabIndex = 5;
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(631, 3);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(75, 23);
+            this.button6.TabIndex = 9;
+            this.button6.Text = "Rectangle";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // button5
             // 
@@ -281,15 +292,15 @@
             this.verticalToolStripMenuItem.Text = "Vertical";
             this.verticalToolStripMenuItem.Click += new System.EventHandler(this.verticalToolStripMenuItem_Click);
             // 
-            // button6
+            // button_Rubber
             // 
-            this.button6.Location = new System.Drawing.Point(631, 3);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(75, 23);
-            this.button6.TabIndex = 9;
-            this.button6.Text = "Rectangle";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
+            this.button_Rubber.Location = new System.Drawing.Point(712, 4);
+            this.button_Rubber.Name = "button_Rubber";
+            this.button_Rubber.Size = new System.Drawing.Size(75, 23);
+            this.button_Rubber.TabIndex = 10;
+            this.button_Rubber.Text = "Rubber";
+            this.button_Rubber.UseVisualStyleBackColor = true;
+            this.button_Rubber.Click += new System.EventHandler(this.button_Rubber_Click);
             // 
             // Form1
             // 
@@ -339,6 +350,7 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button_Rubber;
 
     }
 }

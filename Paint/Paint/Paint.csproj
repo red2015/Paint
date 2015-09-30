@@ -45,8 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Caretaker.cs" />
-    <Compile Include="PaintTools\Shapes\DrawCircleManager.cs" />
-    <Compile Include="PaintTools\DrawLineManager.cs" />
     <Compile Include="PaintTools\FloodFiller.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -54,18 +52,16 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="PaintTools\NewFolder1\BasicDrawer.cs" />
+    <Compile Include="PaintTools\NewFolder1\DrawerCircle.cs" />
+    <Compile Include="PaintTools\NewFolder1\DrawerLine.cs" />
+    <Compile Include="PaintTools\NewFolder1\DrawerRectangle.cs" />
+    <Compile Include="PaintTools\NewFolder1\Rubber.cs" />
     <Compile Include="PaintTools\SaveAndLoad\LoadManager.cs" />
     <Compile Include="Memento.cs" />
     <Compile Include="Originator.cs" />
     <Compile Include="PaintTools\PaintOperation.cs" />
-    <Compile Include="PaintTools\Shapes\DrawerFactory.cs" />
-    <Compile Include="PaintTools\Shapes\DrawingStrategy\BasicDrawer.cs" />
-    <Compile Include="PaintTools\Shapes\DrawingStrategy\DrawerElips.cs" />
-    <Compile Include="PaintTools\Shapes\DrawingStrategy\DrawerLine.cs" />
-    <Compile Include="PaintTools\Shapes\DrawingStrategy\DrawerRectangle.cs" />
-    <Compile Include="PaintTools\Shapes\DrawingStrategy\IDrawerShape.cs" />
-    <Compile Include="PaintTools\Shapes\DrawRectangleManager.cs" />
-    <Compile Include="PaintTools\Shapes\ShapesManager.cs" />
+    <Compile Include="PaintTools\NewFolder1\PaintManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PaintTools\RotateManager.cs" />
@@ -97,7 +93,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="PaintTools\Shapes\DrawingFactory\" />
+    <Folder Include="PaintTools\Shapes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

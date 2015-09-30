@@ -7,5 +7,6 @@
         FloodFill,
         DrawRectangle,
         DrawCircle,
+        Rubber
     }
 }

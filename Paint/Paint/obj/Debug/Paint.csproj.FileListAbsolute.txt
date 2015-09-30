@@ -4,6 +4,6 @@ C:\Users\Michael\Documents\Paint\Paint\Paint\obj\Debug\WindowsFormsApplication1.
 C:\Users\Michael\Documents\Paint\Paint\Paint\bin\Debug\WindowsFormsApplication1.exe
 C:\Users\Michael\Documents\Paint\Paint\Paint\bin\Debug\WindowsFormsApplication1.pdb
 C:\Users\Michael\Documents\Paint\Paint\Paint\obj\Debug\Paint.csprojResolveAssemblyReference.cache
-C:\Users\Michael\Documents\Paint\Paint\Paint\obj\Debug\WindowsFormsApplication1.Form1.resources
 C:\Users\Michael\Documents\Paint\Paint\Paint\obj\Debug\WindowsFormsApplication1.Properties.Resources.resources
 C:\Users\Michael\Documents\Paint\Paint\Paint\obj\Debug\Paint.csproj.GenerateResource.Cache
+C:\Users\Michael\Documents\Paint\Paint\Paint\obj\Debug\PaintApplication.Form1.resources

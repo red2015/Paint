@@ -12,6 +12,8 @@ namespace PaintApplication
         public Bitmap Fill(Bitmap bmp, Point pt, Color replacementColor)
         {
             Color targetColor = GetPixelColor(pt, bmp);
+            if (ColorMatch(targetColor,replacementColor))
+                return bmp;
             Queue<Point> q = new Queue<Point>();
             q.Enqueue(pt);
             while (q.Count > 0)

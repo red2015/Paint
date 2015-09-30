@@ -1,13 +1,11 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace WindowsFormsApplication1.PaintTools.Shapes.DrawingStrategy
+namespace WindowsFormsApplication1.PaintTools.NewFolder1
 {
-    class DrawerElips:IDrawerShape
+    class DrawerCircle
     {
-
-
-        public void Draw(ref PictureBox pictureBox,Point startPoint, Point temporaryPoint, Pen pen)
+        public void Draw(PictureBox pictureBox, Point startPoint, Point temporaryPoint, Pen pen)
         {
             using (Graphics g = Graphics.FromImage(pictureBox.Image))
             {
