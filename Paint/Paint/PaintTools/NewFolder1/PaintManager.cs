@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using WindowsFormsApplication1.PaintTools.NewFolder1;
@@ -17,6 +18,8 @@ namespace WindowsFormsApplication1.PaintTools.Shapes.DrawingStrategy
         private Pen _pen;
         private Caretaker _history;
         private Originator _orginator;
+        private IShapesDrawer _shapesDrawer;
+        private IDrawer _drawer;
 
     #region Constructors
 
@@ -68,28 +71,98 @@ namespace WindowsFormsApplication1.PaintTools.Shapes.DrawingStrategy
             _orginator = new Originator(bit, pictureBox.Height, pictureBox.Width);
             _history.SaveState(_orginator);
         }
+    #region Rotations
+        public void RotatePicture90DegreesRight(PictureBox pictureBox)
+        {
+            TakeSnapshot(pictureBox);
+            RotateManager manager = new RotateManager();
+            Image oldImage = pictureBox.Image;
+            pictureBox.Size = new Size(pictureBox.Height, pictureBox.Width);
+            pictureBox.Image = manager.Rotate90DegreesRight(oldImage);
+        }
 
-        public void Draw(PictureBox pictureBox, Point temporartPoint)
+        public void RotatePicture90DegreesLeft(PictureBox pictureBox)
+        {
+            TakeSnapshot(pictureBox);
+            RotateManager manager = new RotateManager();
+            Image oldImage = pictureBox.Image;
+            pictureBox.Size = new Size(pictureBox.Height, pictureBox.Width);
+            pictureBox.Image = manager.Rotate90DegreesLeft(oldImage);
+        }
+
+        public void RotatePicture180Degrees(PictureBox pictureBox)
+        {
+            TakeSnapshot(pictureBox);
+            RotateManager manager = new RotateManager();
+            Image oldImage = pictureBox.Image;
+            pictureBox.Image = manager.Rotate180Degrees(oldImage);
+        }
+
+        public void FlipPictureVertical(PictureBox pictureBox)
+        {
+            TakeSnapshot(pictureBox);
+            RotateManager manager = new RotateManager();
+            Image oldImage = pictureBox.Image;
+            pictureBox.Image = manager.FlipVertical(oldImage);
+        }
+
+        public void FlipPictureHorizontal(PictureBox pictureBox)
+        {
+            TakeSnapshot(pictureBox);
+            RotateManager manager = new RotateManager();
+            Image oldImage = pictureBox.Image;
+            pictureBox.Image = manager.FlipHorizontal(oldImage);
+        }
+    #endregion
+
+        public void CreateDrawer(Point startPoint)
         {
             switch (_paintOperation)
             {
                 case PaintOperation.BasicDraw:
-                    BasicDraw(pictureBox, temporartPoint);
+                    _drawer = new BasicDrawer(startPoint);
                     break;
                 case PaintOperation.DrawLine:
-                    DrawLine(pictureBox, temporartPoint);
+                    _shapesDrawer = new ShapesDrawerLine(startPoint);
                     break;
                 case PaintOperation.DrawRectangle:
-                    DrawRectangle(pictureBox, temporartPoint);
+                    _shapesDrawer = new ShapesDrawerRectangle(startPoint);
                     break;
                 case PaintOperation.DrawCircle:
-                    DrawCircle(pictureBox, temporartPoint);
+                    _shapesDrawer = new ShapesDrawerCircle(startPoint);
                     break;
                 case PaintOperation.Rubber:
-                    Rubberize(pictureBox, temporartPoint);
+                    _drawer = new Rubber(startPoint);
                     break;
+                default:
+                    _shapesDrawer = new NullObject();
+                    return;
             }
         }
+
+        public void MoveForwad(PictureBox pictureBox, Point temporaryPoint)
+        {
+            if(_paintOperation == PaintOperation.BasicDraw || _paintOperation == PaintOperation.Rubber)
+                _drawer.Draw(pictureBox,temporaryPoint, _pen);
+            else
+            {
+                _shapesDrawer.MoveForward(temporaryPoint);
+            }
+        }
+
+        public void RefreshDrawingShapes(PaintEventArgs e)
+        {
+            if (_paintOperation != PaintOperation.BasicDraw && _paintOperation != PaintOperation.Rubber)
+                _shapesDrawer.Refresh(e, _pen);
+        }
+
+        public void DrawShapes(PictureBox pictureBox)
+        {
+            if (_paintOperation != PaintOperation.BasicDraw && _paintOperation != PaintOperation.Rubber)
+                _shapesDrawer.Draw(pictureBox, _pen);
+        }
+
+
 
         public void FloodFill(PictureBox pictureBox, Point temporaryPoint)
         {
@@ -100,46 +173,6 @@ namespace WindowsFormsApplication1.PaintTools.Shapes.DrawingStrategy
                 pictureBox.Image = floodFiller.Fill(pictureBitmap, temporaryPoint, _pen.Color);
             }
         }
-        #region privateDrawingMethod
-
-        private void DrawCircle(PictureBox pictureBox, Point temporartPoint)
-        {
-            pictureBox.Image = (Image) _actualImage.Clone();
-            DrawerCircle drawerCircle = new DrawerCircle();
-            drawerCircle.Draw(pictureBox, _startPoint, temporartPoint, _pen);
-
-        }
-
-        private void BasicDraw(PictureBox pictureBox, Point temporartPoint)
-        {
-            BasicDrawer basicDrawer = new BasicDrawer();
-            basicDrawer.Draw(pictureBox, _startPoint, temporartPoint, _pen);
-            _startPoint = temporartPoint;
-        }
-
-        private void DrawRectangle(PictureBox pictureBox, Point temporaryPoint)
-        {
-            pictureBox.Image = (Image) _actualImage.Clone();
-            DrawerRectangle drawerRectangle = new DrawerRectangle();
-            drawerRectangle.Draw(pictureBox, _startPoint, temporaryPoint, _pen);
-        }
-
-        private void DrawLine(PictureBox pictureBox, Point temporaryPoint)
-        {
-            pictureBox.Image = (Image) _actualImage.Clone();
-            DrawerLine drawerLine = new DrawerLine();
-            drawerLine.Draw(pictureBox, _startPoint, temporaryPoint, _pen);
-        }
-
-        private void Rubberize(PictureBox pictureBox, Point temporaryPoint)
-        {
-            Rubber rubber = new Rubber();
-            rubber.Draw(pictureBox, _startPoint, temporaryPoint);
-            _startPoint = temporaryPoint;
-
-        }
-
-        #endregion
 
     }
 }

@@ -8,28 +8,33 @@ using System.Windows.Forms;
 
 namespace WindowsFormsApplication1.PaintTools.NewFolder1
 {
-    class Rubber : IDrawer
+    class ShapesDrawerLine : IShapesDrawer
     {
         private Point _startPoint;
+        private Point _endPoint;
 
-        public Rubber(Point startPoint)
+        public ShapesDrawerLine(Point startPoint)
         {
             _startPoint = startPoint;
         }
 
-        public void Draw(PictureBox pictureBox, Point temporaryPoint, Pen pen)
+        public void Draw(PictureBox pictureBox, Pen pen)
         {
             using (Graphics g = Graphics.FromImage(pictureBox.Image))
             {
-                Pen newPen = new Pen(Color.White, 10);
-                g.DrawLine(newPen, _startPoint, temporaryPoint);
-                Rectangle rectangle = new Rectangle(temporaryPoint.X,temporaryPoint.Y, 10, 10);
-                g.DrawRectangle(newPen, rectangle);
+                g.DrawLine(pen,_startPoint, _endPoint);
             }
-            _startPoint = temporaryPoint;
             pictureBox.Invalidate();
         }
 
+        public void MoveForward(Point temporaryPoint)
+        {
+            _endPoint = temporaryPoint;
+        }
 
+        public void Refresh(PaintEventArgs e, Pen pen)
+        {
+            e.Graphics.DrawLine(pen, _startPoint, _endPoint);
+        }
     }
 }

@@ -8,14 +8,22 @@ using System.Windows.Forms;
 
 namespace WindowsFormsApplication1.PaintTools.NewFolder1
 {
-    class BasicDrawer
+    class BasicDrawer : IDrawer
     {
-        public void Draw(PictureBox pictureBox, Point startPoint, Point temporaryPoint, Pen pen)
+        private Point _startPoint;
+
+        public BasicDrawer(Point startPoint)
+        {
+            _startPoint = startPoint;
+        }
+
+        public void Draw(PictureBox pictureBox, Point temporaryPoint, Pen pen)
         {
             using (Graphics g = Graphics.FromImage(pictureBox.Image))
             {
-                g.DrawLine(pen, startPoint, temporaryPoint);
+                g.DrawLine(pen, _startPoint, temporaryPoint);
             }
+            _startPoint = temporaryPoint;
             pictureBox.Invalidate();
         }
     }

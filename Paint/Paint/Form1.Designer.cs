@@ -33,6 +33,7 @@
             this.pictureBox_cavans = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.button_Rubber = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
@@ -54,7 +55,6 @@
             this.flipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.horizontalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.verticalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.button_Rubber = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_cavans)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -86,12 +86,14 @@
             this.pictureBox_cavans.BackColor = System.Drawing.Color.White;
             this.pictureBox_cavans.Location = new System.Drawing.Point(3, 44);
             this.pictureBox_cavans.Name = "pictureBox_cavans";
-            this.pictureBox_cavans.Size = new System.Drawing.Size(558, 324);
+            this.pictureBox_cavans.Size = new System.Drawing.Size(800, 600);
             this.pictureBox_cavans.TabIndex = 3;
             this.pictureBox_cavans.TabStop = false;
+            this.pictureBox_cavans.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox_cavans_Paint);
             this.pictureBox_cavans.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseClick);
             this.pictureBox_cavans.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
             this.pictureBox_cavans.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
+            this.pictureBox_cavans.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_cavans_MouseUp);
             // 
             // panel1
             // 
@@ -120,6 +122,16 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1159, 38);
             this.panel2.TabIndex = 5;
+            // 
+            // button_Rubber
+            // 
+            this.button_Rubber.Location = new System.Drawing.Point(712, 4);
+            this.button_Rubber.Name = "button_Rubber";
+            this.button_Rubber.Size = new System.Drawing.Size(75, 23);
+            this.button_Rubber.TabIndex = 10;
+            this.button_Rubber.Text = "Rubber";
+            this.button_Rubber.UseVisualStyleBackColor = true;
+            this.button_Rubber.Click += new System.EventHandler(this.button_Rubber_Click);
             // 
             // button6
             // 
@@ -291,16 +303,6 @@
             this.verticalToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
             this.verticalToolStripMenuItem.Text = "Vertical";
             this.verticalToolStripMenuItem.Click += new System.EventHandler(this.verticalToolStripMenuItem_Click);
-            // 
-            // button_Rubber
-            // 
-            this.button_Rubber.Location = new System.Drawing.Point(712, 4);
-            this.button_Rubber.Name = "button_Rubber";
-            this.button_Rubber.Size = new System.Drawing.Size(75, 23);
-            this.button_Rubber.TabIndex = 10;
-            this.button_Rubber.Text = "Rubber";
-            this.button_Rubber.UseVisualStyleBackColor = true;
-            this.button_Rubber.Click += new System.EventHandler(this.button_Rubber_Click);
             // 
             // Form1
             // 

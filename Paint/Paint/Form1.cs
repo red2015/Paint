@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using WindowsFormsApplication1.PaintTools.NewFolder1;
 using WindowsFormsApplication1.PaintTools.Shapes.DrawingStrategy;
 using PaintApplication.PaintTools;
 using Trestan;
@@ -11,16 +13,19 @@ namespace PaintApplication
     public partial class Form1 : Form
     {
         private PaintManager paintManager;
-        
+        private Point point;
+        Rectangle rect = new Rectangle();
+        Brush selectionBrush = new SolidBrush(Color.Black);
+
         public Form1()
         {
             InitializeComponent();
             TCResize tcResize = new TCResize(pictureBox_cavans);
             tcResize.SizeIsChanging += SetInformationsSizeAboutCanvan;
             tcResize.SizeIsStarChanging += TakeCanvanSnapshot;
-            if (pictureBox_cavans.Image == null)
+                        if (pictureBox_cavans.Image == null)
             {
-                Bitmap bmp = new Bitmap(pictureBox_cavans.Width, pictureBox_cavans.Height, PixelFormat.Format32bppRgb);
+                Bitmap bmp = new Bitmap(pictureBox_cavans.Width, pictureBox_cavans.Height, PixelFormat.Format64bppPArgb);
                 pictureBox_cavans.Image = bmp;
                 using (Graphics graphics = Graphics.FromImage(pictureBox_cavans.Image))
                 {
@@ -52,18 +57,25 @@ namespace PaintApplication
         {
             if (e.Button == MouseButtons.Left)
             {
-                paintManager.Draw(pictureBox_cavans, e.Location);
-                
+                paintManager.MoveForwad(pictureBox_cavans, e.Location);
+                pictureBox_cavans.Invalidate();
             }
+            
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
+            //if (e.Button == MouseButtons.Left)
+            //{
+            //    TakeCanvanSnapshot();
+            //    paintManager.ActualImage = pictureBox_cavans.Image;
+            //    paintManager.StartPoint = e.Location;
+            //}
             if (e.Button == MouseButtons.Left)
             {
                 TakeCanvanSnapshot();
-                paintManager.ActualImage = pictureBox_cavans.Image;
-                paintManager.StartPoint = e.Location;
+                paintManager.CreateDrawer(e.Location);
+                Invalidate();
             }
         }
 
@@ -82,7 +94,7 @@ namespace PaintApplication
             Rectangle rec = new Rectangle(0, 0, oldBitmap.Width, oldBitmap.Height);
             Bitmap newBitmap = Copy(oldBitmap, rec);
             pictureBox_cavans.Image.Dispose();
-            pictureBox_cavans.Image = new Bitmap(newBitmap);
+            pictureBox_cavans.Image = new Bitmap(newBitmap, newBitmap.Width, newBitmap.Height);
         }
 
         private Bitmap Copy(Bitmap srcBitmap, Rectangle section)
@@ -108,7 +120,6 @@ namespace PaintApplication
             SaveManager saveManager = new SaveManager();
             saveManager.SavePictureToBmpFile(pictureBox_cavans);
         }
-
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             LoadManager loadManager = new LoadManager();
@@ -141,44 +152,27 @@ namespace PaintApplication
 
         private void degreesInRightToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TakeCanvanSnapshot();
-            RotateManager manager = new RotateManager();
-            Image oldImage = pictureBox_cavans.Image;
-            pictureBox_cavans.Size = new Size(pictureBox_cavans.Height, pictureBox_cavans.Width);
-            pictureBox_cavans.Image = manager.Rotate90DegreesRight(oldImage);
+            paintManager.RotatePicture90DegreesRight(pictureBox_cavans);
         }
 
         private void degreesInLeftToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TakeCanvanSnapshot();
-            RotateManager manager = new RotateManager();
-            Image oldImage = pictureBox_cavans.Image;
-            pictureBox_cavans.Size = new Size(pictureBox_cavans.Height, pictureBox_cavans.Width);
-            pictureBox_cavans.Image = manager.Rotate90DegreesLeft(oldImage);
+            paintManager.RotatePicture90DegreesLeft(pictureBox_cavans);
         }
 
         private void horizontalToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TakeCanvanSnapshot();
-            RotateManager manager = new RotateManager();
-            Image oldImage = pictureBox_cavans.Image;
-            pictureBox_cavans.Image = manager.FlipHorizontal(oldImage);
+            paintManager.FlipPictureHorizontal(pictureBox_cavans);
         }
 
         private void verticalToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TakeCanvanSnapshot();
-            RotateManager manager = new RotateManager();
-            Image oldImage = pictureBox_cavans.Image;
-            pictureBox_cavans.Image = manager.FlipVertical(oldImage);
+            paintManager.FlipPictureVertical(pictureBox_cavans);
         }
 
         private void degreesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TakeCanvanSnapshot();
-            RotateManager manager = new RotateManager();
-            Image oldImage = pictureBox_cavans.Image;
-            pictureBox_cavans.Image = manager.Rotate180Degrees(oldImage);
+            paintManager.RotatePicture180Degrees(pictureBox_cavans);
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -199,6 +193,20 @@ namespace PaintApplication
         private void button_Rubber_Click(object sender, EventArgs e)
         {
             paintManager.Operation = PaintOperation.Rubber;
+        }
+
+        private void pictureBox_cavans_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+               paintManager.DrawShapes(pictureBox_cavans);
+            }
+
+        }
+
+        private void pictureBox_cavans_Paint(object sender, PaintEventArgs e)
+        {
+            paintManager.RefreshDrawingShapes(e);
         }
     }
 }
